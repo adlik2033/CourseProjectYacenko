@@ -1,11 +1,16 @@
-﻿using CourseProjectYacenko.Interfaces;
-using CourseProjectYacenko.Models;
+﻿using CourseProjectYacenko.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public interface ITariffRepository : IRepository<Tariff>
+namespace CourseProjectYacenko.Repository
 {
-    Task<IEnumerable<Tariff>> GetTariffsWithServicesAsync();
-    Task<Tariff> GetTariffWithServicesAsync(int id);
-    Task<IEnumerable<Tariff>> GetPopularTariffsAsync(int count);
-    Task<bool> AssignTariffToSubscriberAsync(int tariffId, int subscriberId);
-    Task<bool> RemoveTariffFromSubscriberAsync(int tariffId, int subscriberId);
+    public interface ITariffRepository : IRepository<Tariff>
+    {
+        Task<IEnumerable<Tariff>> GetTariffsWithServicesAsync();
+        Task<Tariff> GetTariffWithServicesAsync(int id);
+        Task<IEnumerable<Tariff>> GetPopularTariffsAsync(int count);
+        Task<bool> AssignTariffToUserAsync(int tariffId, int userId);
+        Task<bool> RemoveTariffFromUserAsync(int tariffId, int userId);
+        Task<IEnumerable<Tariff>> FindMatchingTariffsAsync(int minutes, int internetGb, int sms);
+    }
 }

@@ -1,10 +1,15 @@
-﻿using CourseProjectYacenko.Interfaces;
-using CourseProjectYacenko.Models;
+﻿using CourseProjectYacenko.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public interface IPaymentRepository : IRepository<Payment>
+namespace CourseProjectYacenko.Repository
 {
-    Task<IEnumerable<Payment>> GetPaymentsBySubscriberAsync(int subscriberId);
-    Task<IEnumerable<Payment>> GetPaymentsByDateRangeAsync(DateTime startDate, DateTime endDate);
-    Task<decimal> GetTotalRevenueAsync();
-    Task<Dictionary<string, decimal>> GetRevenueByPaymentMethodAsync();
+    public interface IPaymentRepository : IRepository<Payment>
+    {
+        Task<IEnumerable<Payment>> GetPaymentsByUserAsync(int userId);
+        Task<IEnumerable<Payment>> GetPaymentsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<decimal> GetTotalRevenueAsync();
+        Task<decimal> GetUserTotalPaidAsync(int userId);
+    }
 }

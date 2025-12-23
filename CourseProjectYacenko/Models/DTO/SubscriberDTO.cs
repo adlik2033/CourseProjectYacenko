@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CourseProjectYacenko.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CourseProjectYacenko.DTO

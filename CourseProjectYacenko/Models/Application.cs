@@ -26,33 +26,24 @@ namespace CourseProjectYacenko.Models
 
     public class Application
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Тип заявки")]
+        public int AppUserId { get; set; }
+
+        [Required]
         public ApplicationType Type { get; set; }
 
-        [Display(Name = "Дата создания")]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        [Display(Name = "Дата обработки")]
         public DateTime? ProcessingDate { get; set; }
 
-        [Display(Name = "Статус")]
         public ApplicationStatus Status { get; set; } = ApplicationStatus.New;
 
-        [Display(Name = "Комментарий")]
-        [StringLength(1000, ErrorMessage = "Комментарий не должен превышать 1000 символов")]
-        public string Comment { get; set; }
-
-        // Внешний ключ
-        [Required]
-        [Display(Name = "Абонент")]
-        public int SubscriberId { get; set; }
+        [MaxLength(1000)]
+        public string Comment { get; set; } = null!;
 
         // Навигационные свойства
-        [Display(Name = "Абонент")]
-        public virtual Subscriber Subscriber { get; set; } = null!;
+        public virtual AppUser AppUser { get; set; } = null!;
     }
 }
