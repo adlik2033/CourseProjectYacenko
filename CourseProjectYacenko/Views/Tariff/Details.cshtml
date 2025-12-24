@@ -1,0 +1,133 @@
+﻿@model CourseProjectYacenko.Models.TariffDto
+@{
+    ViewData["Title"] = "Детали тарифа";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">@Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">@Model.Description</p>
+
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h5>Интернет</h5>
+                                <h2 class="text-primary">@Model.InternetTrafficGB</h2>
+                                <p class="text-muted">Гигабайт в месяц</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h5>Минуты</h5>
+                                <h2 class="text-success">@Model.MinutesCount</h2>
+                                <p class="text-muted">Минут в месяц</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h5>SMS</h5>
+                                <h2 class="text-info">@Model.SmsCount</h2>
+                                <p class="text-muted">Сообщений в месяц</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <div class="display-4 text-primary">@Model.MonthlyFee.ToString("N0")</div>
+                        <div class="text-muted">рублей в месяц</div>
+                    </div>
+
+                    @if (Model.ConnectedServices != null && Model.ConnectedServices.Any())
+                    {
+                        <div class="mb-4">
+                            <h5>Включенные услуги:</h5>
+                            <div class="row">
+                                @foreach (var service in Model.ConnectedServices)
+                                {
+                                    <div class="col-md-6 mb-2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6>@service.Name</h6>
+                                                <p class="mb-1">@service.Description</p>
+                                                <span class="badge bg-secondary">@service.Cost.ToString("N0") руб.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-grid gap-2">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Profile" asp-action="Subscribe" method="post">
+                                <input type="hidden" name="tariffId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-success btn-lg">Подключить тариф</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-success btn-lg">Войти для подключения</a>
+                        }
+                        <a asp-action="Index" class="btn btn-outline-secondary">Вернуться к тарифам</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5>Сравнение с другими тарифами</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Базовый</h6>
+                                <small class="text-muted">300 руб.</small>
+                            </div>
+                            <small>5 ГБ / 100 мин / 50 SMS</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action active">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">@Model.Name</h6>
+                                <small>@Model.MonthlyFee.ToString("N0") руб.</small>
+                            </div>
+                            <small>@Model.InternetTrafficGB ГБ / @Model.MinutesCount мин / @Model.SmsCount SMS</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Премиум</h6>
+                                <small class="text-muted">1000 руб.</small>
+                            </div>
+                            <small>30 ГБ / 1000 мин / 500 SMS</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h5>Преимущества</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Безлимитные звонки внутри сети</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Роуминг по России</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Безлимитный мессенджер</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Персональный менеджер</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Приоритетная поддержка</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,12 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseProjectYacenko.Views.Home
-{
-    class Index
-    {
-    }
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Явное указание
+    ViewData["Title"] = "Главная";
 }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Мобильный оператор</a>
+        </div>
+    </nav>
+
+    <main class="container mt-5">
+        <h1 class="text-center mb-4">Добро пожаловать в Мобильный оператор!</h1>
+
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">📱 Наши тарифы</h5>
+                        <p class="card-text">Выберите оптимальный тариф для своих потребностей</p>
+                        <a href="/Tariff" class="btn btn-primary">Смотреть тарифы</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">👤 Личный кабинет</h5>
+                        <p class="card-text">Управляйте своими услугами и настройками</p>
+                        <a href="/Account/Login" class="btn btn-success">Войти</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">💰 Управление балансом</h5>
+                        <p class="card-text">Пополняйте баланс и контролируйте расходы</p>
+                        <a href="/Account/Register" class="btn btn-warning">Зарегистрироваться</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">🛟 Поддержка</h5>
+                        <p class="card-text">Мы всегда готовы помочь вам</p>
+                        <a href="/Home/Contact" class="btn btn-info">Связаться с нами</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/Home/Test" class="btn btn-outline-secondary">Вернуться к тестовой странице</a>
+        </div>
+    </main>
+</body>
+</html>

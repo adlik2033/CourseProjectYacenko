@@ -1,12 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseProjectYacenko.Views.Home
-{
-    class Dashboard
-    {
-    }
+﻿@{
+    ViewData["Title"] = "Панель управления";
 }
+
+<div class="container">
+    <h2>Добро пожаловать, @User.Identity.Name!</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Баланс</div>
+                <div class="card-body">
+                    <h5 class="card-title">500 руб.</h5>
+                    <a asp-controller="Payment" asp-action="AddBalance" class="btn btn-light">Пополнить</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Активные тарифы</div>
+                <div class="card-body">
+                    <h5 class="card-title">2 тарифа</h5>
+                    <a asp-controller="Profile" asp-action="MyTariffs" class="btn btn-light">Управлять</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Последний платеж</div>
+                <div class="card-body">
+                    <h5 class="card-title">300 руб.</h5>
+                    <a asp-controller="Payment" asp-action="MyPayments" class="btn btn-light">История</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Заявки</div>
+                <div class="card-body">
+                    <h5 class="card-title">1 активная</h5>
+                    <a href="#" class="btn btn-light">Просмотреть</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Быстрые действия</div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Tariff" asp-action="Index" class="btn btn-outline-primary">Подключить новый тариф</a>
+                        <a asp-controller="Payment" asp-action="AddBalance" class="btn btn-outline-success">Пополнить баланс</a>
+                        <a href="#" class="btn btn-outline-warning">Подать заявку</a>
+                        <a href="#" class="btn btn-outline-info">Сменить тариф</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Последние операции</div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Пополнение баланса</h6>
+                                <small>Сегодня</small>
+                            </div>
+                            <p class="mb-1">+300 руб.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Списание за тариф</h6>
+                                <small>Вчера</small>
+                            </div>
+                            <p class="mb-1">-500 руб.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Подключение услуги</h6>
+                                <small>3 дня назад</small>
+                            </div>
+                            <p class="mb-1">Активирована услуга "Безлимитный интернет"</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

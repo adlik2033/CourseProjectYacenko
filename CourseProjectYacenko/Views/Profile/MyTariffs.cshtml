@@ -1,0 +1,78 @@
+﻿@model IEnumerable<CourseProjectYacenko.Models.TariffDto>
+@{
+    ViewData["Title"] = "Мои тарифы";
+}
+
+<div class="container">
+    <h2>Мои тарифы</h2>
+
+    <div class="row mt-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var tariff in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">@tariff.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@tariff.Description</p>
+                            <div class="mb-3">
+                                <span class="h4">@tariff.MonthlyFee.ToString("N0") руб./мес</span>
+                            </div>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Интернет:</span>
+                                    <strong>@tariff.InternetTrafficGB ГБ</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Минуты:</span>
+                                    <strong>@tariff.MinutesCount мин</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>SMS:</span>
+                                    <strong>@tariff.SmsCount шт</strong>
+                                </li>
+                            </ul>
+
+                            @if (tariff.ConnectedServices != null && tariff.ConnectedServices.Any())
+                            {
+                                <div class="mb-3">
+                                    <h6>Подключенные услуги:</h6>
+                                    <ul class="list-unstyled">
+                                        @foreach (var service in tariff.ConnectedServices)
+                                        {
+                                            <li>• @service.Name (@service.Cost.ToString("N0") руб.)</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <form asp-controller="Profile" asp-action="Unsubscribe" method="post">
+                                <input type="hidden" name="tariffId" value="@tariff.Id" />
+                                <button type="submit" class="btn btn-danger w-100">Отключить тариф</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5>У вас пока нет подключенных тарифов</h5>
+                    <p>Перейдите в каталог тарифов, чтобы выбрать подходящий вариант.</p>
+                    <a asp-controller="Tariff" asp-action="Index" class="btn btn-primary">Выбрать тариф</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Tariff" asp-action="Index" class="btn btn-outline-primary">Подключить новый тариф</a>
+        <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary">Назад в кабинет</a>
+    </div>
+</div>

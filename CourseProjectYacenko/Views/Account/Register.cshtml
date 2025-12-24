@@ -1,0 +1,89 @@
+﻿@model CourseProjectYacenko.Models.RegisterDto
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0 text-center">
+                        <i class="bi bi-person-plus me-2"></i>Регистрация
+                    </h3>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Личные данные</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">ФИО *</label>
+                                    <input asp-for="FullName" class="form-control" placeholder="Иванов Иван Иванович" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Номер телефона *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">+7</span>
+                                        <input asp-for="PhoneNumber" class="form-control" placeholder="999 999-99-99" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input asp-for="Email" type="email" class="form-control" placeholder="example@mail.ru" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Адрес</label>
+                                    <input asp-for="Address" class="form-control" placeholder="г. Москва, ул. Примерная, д. 1">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Безопасность</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Пароль *</label>
+                                    <input asp-for="Password" type="password" class="form-control" placeholder="Минимум 6 символов" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Подтверждение пароля *</label>
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Повторите пароль" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Паспортные данные</label>
+                                    <input asp-for="PassportData" class="form-control" placeholder="Серия и номер паспорта">
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        Я согласен с условиями
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-person-check me-2"></i>Зарегистрироваться
+                            </button>
+
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Уже есть аккаунт? Войти
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CourseProjectYacenko.DTO.User;
 using CourseProjectYacenko.Helpers;
 using CourseProjectYacenko.Models;
 using CourseProjectYacenko.Repository;
@@ -127,5 +128,6 @@ namespace CourseProjectYacenko.Services
             var user = await _userRepository.GetByIdAsync(userId);
             return user == null ? null : _mapper.Map<UserDto>(user);
         }
+
     }
 }

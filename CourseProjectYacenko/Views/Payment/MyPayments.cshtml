@@ -1,0 +1,135 @@
+﻿@model IEnumerable<CourseProjectYacenko.Models.PaymentDto>
+@{
+    ViewData["Title"] = "Мои платежи";
+}
+
+<div class="container">
+    <h2>История платежей</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Всего пополнено</h5>
+                    <div class="display-6 text-success">2 500 руб.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Последний платеж</h5>
+                    <div class="display-6 text-primary">300 руб.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Количество платежей</h5>
+                    <div class="display-6 text-info">5</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Средний чек</h5>
+                    <div class="display-6 text-warning">500 руб.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mt-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Список платежей</h5>
+                <a asp-action="AddBalance" class="btn btn-success">Новое пополнение</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Сумма</th>
+                            <th>Способ оплаты</th>
+                            <th>Статус</th>
+                            <th>Детали</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var payment in Model.OrderByDescending(p => p.PaymentDateTime))
+                            {
+                                <tr>
+                                    <td>@payment.PaymentDateTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td class="fw-bold text-success">+@payment.Amount.ToString("N0") руб.</td>
+                                    <td>
+                                        @switch (payment.PaymentMethod)
+                                        {
+                                            case "CreditCard":
+                                                <span><i class="bi bi-credit-card"></i> Банковская карта</span>
+                                                break;
+                                            case "Online":
+                                                <span><i class="bi bi-wallet"></i> Электронный кошелек</span>
+                                                break;
+                                            case "BankTransfer":
+                                                <span><i class="bi bi-bank"></i> Банковский перевод</span>
+                                                break;
+                                            default:
+                                                <span>@payment.PaymentMethod</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (payment.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">Успешно</span>
+                                        }
+                                        else if (payment.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">В обработке</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Ошибка</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info">Детали</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <div class="alert alert-info">
+                                        <h5>Платежи не найдены</h5>
+                                        <p>У вас еще не было платежей. Пополните баланс, чтобы увидеть историю.</p>
+                                        <a asp-action="AddBalance" class="btn btn-primary">Пополнить баланс</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary">Назад в кабинет</a>
+    </div>
+</div>
+
+<style>
+    .table tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>

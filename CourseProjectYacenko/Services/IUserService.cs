@@ -1,4 +1,5 @@
-﻿using CourseProjectYacenko.Models;
+﻿using CourseProjectYacenko.DTO.User;
+using CourseProjectYacenko.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

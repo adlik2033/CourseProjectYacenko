@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CourseProjectYacenko.DTO;
+using CourseProjectYacenko.DTO.User;
 using CourseProjectYacenko.Models;
 
 namespace CourseProjectYacenko.Helpers

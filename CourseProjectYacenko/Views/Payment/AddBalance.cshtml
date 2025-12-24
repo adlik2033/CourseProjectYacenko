@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Пополнение баланса";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="text-center mb-0">Пополнение баланса</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="display-6 text-primary">Текущий баланс: 500 руб.</div>
+                    </div>
+
+                    <form asp-action="AddBalance" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Сумма пополнения (руб.)</label>
+                            <input type="number" name="amount" class="form-control form-control-lg"
+                                   min="10" max="50000" step="10" value="100" required>
+                            <div class="form-text">Минимальная сумма: 10 руб.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Способ оплаты</label>
+                            <select name="paymentMethod" class="form-select">
+                                <option value="CreditCard">Банковская карта</option>
+                                <option value="Online">Электронный кошелек</option>
+                                <option value="BankTransfer">Банковский перевод</option>
+                                <option value="MobilePayment">Мобильный платеж</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6>Быстрое пополнение:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-outline-primary quick-amount" data-amount="100">100 руб.</button>
+                                <button type="button" class="btn btn-outline-primary quick-amount" data-amount="300">300 руб.</button>
+                                <button type="button" class="btn btn-outline-primary quick-amount" data-amount="500">500 руб.</button>
+                                <button type="button" class="btn btn-outline-primary quick-amount" data-amount="1000">1000 руб.</button>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Пополнить баланс</button>
+                            <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h5>Способы оплаты</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <i class="bi bi-credit-card" style="font-size: 2rem;"></i>
+                            <div class="small">Карты</div>
+                        </div>
+                        <div class="col-3">
+                            <i class="bi bi-phone" style="font-size: 2rem;"></i>
+                            <div class="small">Мобильный</div>
+                        </div>
+                        <div class="col-3">
+                            <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                            <div class="small">Банк</div>
+                        </div>
+                        <div class="col-3">
+                            <i class="bi bi-wallet" style="font-size: 2rem;"></i>
+                            <div class="small">Кошелек</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка быстрых кнопок пополнения
+            document.querySelectorAll('.quick-amount').forEach(button => {
+                button.addEventListener('click', function() {
+                    const amount = this.getAttribute('data-amount');
+                    document.querySelector('input[name="amount"]').value = amount;
+                });
+            });
+
+            // Валидация формы
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const amountInput = document.querySelector('input[name="amount"]');
+                const amount = parseFloat(amountInput.value);
+
+                if (amount < 10) {
+                    e.preventDefault();
+                    alert('Минимальная сумма пополнения - 10 руб.');
+                    amountInput.focus();
+                }
+
+                if (amount > 50000) {
+                    e.preventDefault();
+                    alert('Максимальная сумма пополнения - 50 000 руб.');
+                    amountInput.focus();
+                }
+            });
+        });
+    </script>
+}
