@@ -43,24 +43,29 @@ namespace CourseProjectYacenko.Repository
         {
             await _dbSet.AddAsync(entity);
         }
+
         public virtual async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await Task.CompletedTask;
         }
+
         public virtual async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await Task.CompletedTask;
         }
+
         public virtual async Task<bool> ExistsAsync(int id)
         {
             return await GetByIdAsync(id) != null;
         }
+
         public virtual async Task<int> CountAsync()
         {
             return await _dbSet.CountAsync();
         }
+
         public virtual async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

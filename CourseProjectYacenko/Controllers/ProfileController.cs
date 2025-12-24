@@ -1,7 +1,6 @@
-﻿using CourseProjectYacenko.Models;
-using CourseProjectYacenko.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CourseProjectYacenko.Services;
 using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Controllers
@@ -10,16 +9,11 @@ namespace CourseProjectYacenko.Controllers
     public class ProfileController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IPaymentService _paymentService;
         private readonly ITariffService _tariffService;
 
-        public ProfileController(
-            IUserService userService,
-            IPaymentService paymentService,
-            ITariffService tariffService)
+        public ProfileController(IUserService userService, ITariffService tariffService)
         {
             _userService = userService;
-            _paymentService = paymentService;
             _tariffService = tariffService;
         }
 
@@ -41,62 +35,32 @@ namespace CourseProjectYacenko.Controllers
             return View(tariffs);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> MyPayments()
+        [HttpPost]
+        public async Task<IActionResult> Subscribe(int tariffId)
         {
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var payments = await _userService.GetUserPaymentsAsync(userId);
+            var success = await _tariffService.AssignTariffToUserAsync(tariffId, userId);
 
-            return View(payments);
-        }
+            if (success)
+                TempData["SuccessMessage"] = "Тариф успешно подключен!";
+            else
+                TempData["ErrorMessage"] = "Ошибка при подключении тарифа";
 
-        [HttpGet]
-        public IActionResult AddBalance()
-        {
-            return View();
+            return RedirectToAction("MyTariffs");
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBalance(decimal amount)
+        public async Task<IActionResult> Unsubscribe(int tariffId)
         {
-            if (amount <= 0)
-            {
-                ModelState.AddModelError("", "Сумма должна быть больше нуля");
-                return View();
-            }
-
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var success = await _userService.AddBalanceAsync(userId, amount);
+            var success = await _tariffService.RemoveTariffFromUserAsync(tariffId, userId);
 
             if (success)
-                TempData["SuccessMessage"] = "Баланс успешно пополнен!";
+                TempData["SuccessMessage"] = "Тариф успешно отключен!";
             else
-                TempData["ErrorMessage"] = "Ошибка при пополнении баланса";
+                TempData["ErrorMessage"] = "Ошибка при отключении тарифа";
 
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public IActionResult EditProfile()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditProfile(UpdateUserDto model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var success = await _userService.UpdateUserProfileAsync(userId, model);
-
-            if (success)
-                TempData["SuccessMessage"] = "Профиль успешно обновлен!";
-            else
-                TempData["ErrorMessage"] = "Ошибка при обновлении профиля";
-
-            return RedirectToAction("Index");
+            return RedirectToAction("MyTariffs");
         }
     }
 }

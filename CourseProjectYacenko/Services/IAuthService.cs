@@ -1,4 +1,5 @@
 ﻿using CourseProjectYacenko.Models;
+using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Services
 {
@@ -6,15 +7,8 @@ namespace CourseProjectYacenko.Services
     {
         Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
         Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto);
-        Task<AuthResponseDto> RefreshTokenAsync(string token, string refreshToken);
         Task<bool> LogoutAsync(int userId);
-        Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
+        Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword);
         Task<UserDto> GetCurrentUserAsync(int userId);
-    }
-    public class ChangePasswordDto
-    {
-        public string CurrentPassword { get; set; } = null!;
-        public string NewPassword { get; set; } = null!;
-        public string ConfirmPassword { get; set; } = null!;
     }
 }

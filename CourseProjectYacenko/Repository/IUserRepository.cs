@@ -13,6 +13,5 @@ namespace CourseProjectYacenko.Repository
         Task<IEnumerable<AppUser>> GetUsersWithLowBalanceAsync(decimal threshold);
         Task<decimal> GetTotalBalanceAsync();
         Task<int> GetActiveUsersCountAsync();
-        Task<bool> AddBalanceAsync(int userId, decimal amount);
     }
 }

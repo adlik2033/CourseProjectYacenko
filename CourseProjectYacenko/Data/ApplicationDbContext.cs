@@ -20,30 +20,21 @@ namespace CourseProjectYacenko.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Конфигурация связей
+            // Связи
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.Tariffs)
                 .WithOne(t => t.AppUser)
-                .HasForeignKey(t => t.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(t => t.AppUserId);
 
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.Payments)
                 .WithOne(p => p.AppUser)
-                .HasForeignKey(p => p.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AppUser>()
-                .HasMany(u => u.Applications)
-                .WithOne(a => a.AppUser)
-                .HasForeignKey(a => a.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(p => p.AppUserId);
 
             modelBuilder.Entity<Tariff>()
                 .HasMany(t => t.ConnectedServices)
                 .WithOne(s => s.Tariff)
-                .HasForeignKey(s => s.TariffId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(s => s.TariffId);
 
             // Уникальные индексы
             modelBuilder.Entity<AppUser>()
@@ -54,69 +45,16 @@ namespace CourseProjectYacenko.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Начальные данные для тарифов
+            // Начальные данные
             modelBuilder.Entity<Tariff>().HasData(
-                new Tariff
-                {
-                    Id = 1,
-                    Name = "Базовый",
-                    Description = "Базовый тариф для новых абонентов",
-                    MonthlyFee = 300,
-                    InternetTrafficGB = 5,
-                    MinutesCount = 100,
-                    SmsCount = 50
-                },
-                new Tariff
-                {
-                    Id = 2,
-                    Name = "Стандарт",
-                    Description = "Популярный тариф для ежедневного использования",
-                    MonthlyFee = 500,
-                    InternetTrafficGB = 15,
-                    MinutesCount = 300,
-                    SmsCount = 100
-                },
-                new Tariff
-                {
-                    Id = 3,
-                    Name = "Премиум",
-                    Description = "Тариф для активных пользователей",
-                    MonthlyFee = 1000,
-                    InternetTrafficGB = 30,
-                    MinutesCount = 1000,
-                    SmsCount = 500
-                }
+                new Tariff { Id = 1, Name = "Базовый", Description = "Для новых клиентов", MonthlyFee = 300, InternetTrafficGB = 5, MinutesCount = 100, SmsCount = 50 },
+                new Tariff { Id = 2, Name = "Стандарт", Description = "Популярный тариф", MonthlyFee = 500, InternetTrafficGB = 15, MinutesCount = 300, SmsCount = 100 },
+                new Tariff { Id = 3, Name = "Премиум", Description = "Для активных пользователей", MonthlyFee = 1000, InternetTrafficGB = 30, MinutesCount = 1000, SmsCount = 500 }
             );
 
-            // Начальные данные для услуг
             modelBuilder.Entity<Service>().HasData(
-                new Service
-                {
-                    Id = 1,
-                    Name = "Безлимитный YouTube",
-                    Description = "Просмотр YouTube без расхода трафика",
-                    Type = ServiceType.Entertainment,
-                    Cost = 50,
-                    BillingPeriod = BillingPeriod.Monthly
-                },
-                new Service
-                {
-                    Id = 2,
-                    Name = "Антивирус",
-                    Description = "Защита устройства от вирусов",
-                    Type = ServiceType.Security,
-                    Cost = 100,
-                    BillingPeriod = BillingPeriod.Monthly
-                },
-                new Service
-                {
-                    Id = 3,
-                    Name = "Международные звонки",
-                    Description = "Выгодные тарифы на международные звонки",
-                    Type = ServiceType.Calls,
-                    Cost = 200,
-                    BillingPeriod = BillingPeriod.Monthly
-                }
+                new Service { Id = 1, Name = "YouTube безлимит", Description = "Безлимитный YouTube", Type = ServiceType.Entertainment, Cost = 50, BillingPeriod = BillingPeriod.Monthly },
+                new Service { Id = 2, Name = "Антивирус", Description = "Защита устройства", Type = ServiceType.Security, Cost = 100, BillingPeriod = BillingPeriod.Monthly }
             );
         }
     }

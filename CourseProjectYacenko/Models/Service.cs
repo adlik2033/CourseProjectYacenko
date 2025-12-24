@@ -2,39 +2,20 @@
 
 namespace CourseProjectYacenko.Models
 {
-    public enum ServiceType
-    {
-        Internet,
-        Calls,
-        SMS,
-        Entertainment,
-        Security,
-        Other
-    }
-
-    public enum BillingPeriod
-    {
-        Daily,
-        Weekly,
-        Monthly,
-        OneTime
-    }
+    public enum ServiceType { Internet, Calls, SMS, Entertainment, Security, Other }
+    public enum BillingPeriod { Daily, Weekly, Monthly, OneTime }
 
     public class Service
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Название услуги обязательно")]
-        [MaxLength(100)]
-        public string Name { get; set; } = null!;
+        [Required]
+        public string Name { get; set; }
 
-        [MaxLength(500)]
-        public string Description { get; set; } = null!;
-
+        public string Description { get; set; }
         public ServiceType Type { get; set; }
 
-        [Required(ErrorMessage = "Стоимость обязательна")]
-        [Range(0, double.MaxValue, ErrorMessage = "Стоимость не может быть отрицательной")]
+        [Range(0, double.MaxValue)]
         public decimal Cost { get; set; }
 
         public BillingPeriod BillingPeriod { get; set; } = BillingPeriod.Monthly;
@@ -43,6 +24,6 @@ namespace CourseProjectYacenko.Models
         public int? TariffId { get; set; }
 
         // Навигационные свойства
-        public virtual Tariff Tariff { get; set; } = null!;
+        public virtual Tariff Tariff { get; set; }
     }
 }

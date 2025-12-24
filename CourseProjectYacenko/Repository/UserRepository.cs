@@ -25,7 +25,6 @@ namespace CourseProjectYacenko.Repository
         {
             return await _dbSet
                 .Include(u => u.Tariffs)
-                    .ThenInclude(t => t.ConnectedServices)
                 .Include(u => u.Payments)
                 .Include(u => u.Applications)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -43,7 +42,6 @@ namespace CourseProjectYacenko.Repository
         {
             return await _dbSet
                 .Where(u => u.Balance < threshold)
-                .OrderBy(u => u.Balance)
                 .ToListAsync();
         }
 
@@ -54,21 +52,7 @@ namespace CourseProjectYacenko.Repository
 
         public async Task<int> GetActiveUsersCountAsync()
         {
-            return await _dbSet
-                .Where(u => u.IsActive && (u.Balance > 0 || u.Tariffs.Any()))
-                .CountAsync();
-        }
-
-        public async Task<bool> AddBalanceAsync(int userId, decimal amount)
-        {
-            var user = await GetByIdAsync(userId);
-            if (user == null) return false;
-
-            user.Balance += amount;
-            await UpdateAsync(user);
-            await SaveChangesAsync();
-
-            return true;
+            return await _dbSet.CountAsync(u => u.IsActive);
         }
 
         public override async Task<AppUser> GetByIdAsync(int id)

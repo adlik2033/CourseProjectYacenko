@@ -19,14 +19,13 @@ namespace CourseProjectYacenko.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login()
         {
-            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDto model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -42,7 +41,6 @@ namespace CourseProjectYacenko.Controllers
                     new Claim(ClaimTypes.Email, result.User.Email),
                     new Claim(ClaimTypes.Role, result.User.Role),
                     new Claim("FullName", result.User.FullName),
-                    new Claim("Token", result.Token),
                     new Claim("Balance", result.User.Balance.ToString())
                 };
 
@@ -51,23 +49,14 @@ namespace CourseProjectYacenko.Controllers
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(identity),
-                    new AuthenticationProperties
-                    {
-                        IsPersistent = true,
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
-                    });
+                    new ClaimsPrincipal(identity));
 
                 Response.Cookies.Append("access_token", result.Token, new CookieOptions
                 {
                     HttpOnly = false,
                     Secure = false,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(60)
+                    SameSite = SameSiteMode.Strict
                 });
-
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
 
                 return RedirectToAction("Dashboard", "Home");
             }

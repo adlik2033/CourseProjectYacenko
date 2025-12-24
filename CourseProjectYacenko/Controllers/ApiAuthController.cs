@@ -1,20 +1,19 @@
-﻿using CourseProjectYacenko.Models;
-using CourseProjectYacenko.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using CourseProjectYacenko.Models;
+using CourseProjectYacenko.Services;
 using System;
 using System.Threading.Tasks;
 
-namespace CourseProjectYacenko.Controllers
+namespace CourseProjectYacenko.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ApiAuthController : ControllerBase
+    public class AuthApiController : ControllerBase
     {
         private readonly IAuthService _authService;
 
-        public ApiAuthController(IAuthService authService)
+        public AuthApiController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -48,15 +47,6 @@ namespace CourseProjectYacenko.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            await _authService.LogoutAsync(userId);
-            return Ok(new { message = "Logged out successfully" });
-        }
-
-        [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
@@ -68,25 +58,5 @@ namespace CourseProjectYacenko.Controllers
 
             return Ok(user);
         }
-
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
-        {
-            try
-            {
-                var result = await _authService.RefreshTokenAsync(request.Token, request.RefreshToken);
-                return Ok(result);
-            }
-            catch (SecurityTokenException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-    }
-
-    public class RefreshTokenRequest
-    {
-        public string Token { get; set; } = null!;
-        public string RefreshToken { get; set; } = null!;
     }
 }

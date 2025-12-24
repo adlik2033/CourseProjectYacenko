@@ -15,7 +15,6 @@ namespace CourseProjectYacenko.Repository
         {
             return await _dbSet
                 .Include(t => t.ConnectedServices)
-                .Include(t => t.AppUser)
                 .ToListAsync();
         }
 
@@ -23,7 +22,6 @@ namespace CourseProjectYacenko.Repository
         {
             return await _dbSet
                 .Include(t => t.ConnectedServices)
-                .Include(t => t.AppUser)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
@@ -31,8 +29,6 @@ namespace CourseProjectYacenko.Repository
         {
             return await _dbSet
                 .Include(t => t.ConnectedServices)
-                .OrderByDescending(t => t.AppUserId != null ? 1 : 0)
-                .ThenBy(t => t.MonthlyFee)
                 .Take(count)
                 .ToListAsync();
         }
@@ -64,12 +60,9 @@ namespace CourseProjectYacenko.Repository
         public async Task<IEnumerable<Tariff>> FindMatchingTariffsAsync(int minutes, int internetGb, int sms)
         {
             return await _dbSet
-                .Include(t => t.ConnectedServices)
                 .Where(t => t.MinutesCount >= minutes &&
                            t.InternetTrafficGB >= internetGb &&
                            t.SmsCount >= sms)
-                .OrderBy(t => t.MonthlyFee)
-                .Take(5)
                 .ToListAsync();
         }
 
