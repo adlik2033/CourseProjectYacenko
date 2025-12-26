@@ -9,21 +9,31 @@ namespace CourseProjectYacenko.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Название услуги обязательно")]
+        [MaxLength(100, ErrorMessage = "Название не должно превышать 100 символов")]
+        [Display(Name = "Название услуги")]
+        public string Name { get; set; } = null!;
 
-        public string Description { get; set; }
+        [MaxLength(500, ErrorMessage = "Описание не должно превышать 500 символов")]
+        [Display(Name = "Описание")]
+        public string Description { get; set; } = null!;
+
+        [Display(Name = "Тип услуги")]
         public ServiceType Type { get; set; }
 
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, ErrorMessage = "Стоимость не может быть отрицательной")]
+        [Display(Name = "Стоимость")]
         public decimal Cost { get; set; }
 
+        [Display(Name = "Период оплаты")]
         public BillingPeriod BillingPeriod { get; set; } = BillingPeriod.Monthly;
 
-        // Внешний ключ
+        // Внешний ключ - nullable!
+        [Display(Name = "ID тарифа")]
         public int? TariffId { get; set; }
 
         // Навигационные свойства
-        public virtual Tariff Tariff { get; set; }
+        [Display(Name = "Тариф")]
+        public virtual Tariff? Tariff { get; set; }
     }
 }

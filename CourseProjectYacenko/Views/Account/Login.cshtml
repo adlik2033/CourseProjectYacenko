@@ -13,15 +13,29 @@
                 </div>
 
                 <div class="card-body">
-                    <form method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+
+                    <form method="post" id="loginForm">
+                        @Html.AntiForgeryToken()
+
                         <div class="mb-3">
-                            <label class="form-label">Номер телефона</label>
-                            <input asp-for="PhoneNumber" class="form-control">
+                            <label class="form-label">Номер телефона *</label>
+                            <input asp-for="PhoneNumber" class="form-control" required>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Пароль</label>
-                            <input asp-for="Password" type="password" class="form-control">
+                            <label class="form-label">Пароль *</label>
+                            <input asp-for="Password" type="password" class="form-control" required>
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">Войти</button>
@@ -35,3 +49,10 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('loginForm')?.addEventListener('submit', function (e) {
+        });
+    </script>
+}

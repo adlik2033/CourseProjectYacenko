@@ -9,29 +9,39 @@ namespace CourseProjectYacenko.Models
 
         [Required(ErrorMessage = "Название тарифа обязательно")]
         [MaxLength(100, ErrorMessage = "Название не должно превышать 100 символов")]
+        [Display(Name = "Название тарифа")]
         public string Name { get; set; } = null!;
 
-        [MaxLength(500)]
+        [MaxLength(500, ErrorMessage = "Описание не должно превышать 500 символов")]
+        [Display(Name = "Описание")]
         public string Description { get; set; } = null!;
 
         [Required(ErrorMessage = "Ежемесячная плата обязательна")]
         [Range(0, double.MaxValue, ErrorMessage = "Плата не может быть отрицательной")]
+        [Display(Name = "Ежемесячная плата")]
         public decimal MonthlyFee { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Объем трафика не может быть отрицательным")]
+        [Display(Name = "Интернет трафик (ГБ)")]
         public int InternetTrafficGB { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Количество минут не может быть отрицательным")]
+        [Display(Name = "Количество минут")]
         public int MinutesCount { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Количество SMS не может быть отрицательным")]
+        [Display(Name = "Количество SMS")]
         public int SmsCount { get; set; }
 
-        // Внешний ключ
+        // Внешний ключ - nullable!
+        [Display(Name = "ID пользователя")]
         public int? AppUserId { get; set; }
 
         // Навигационные свойства
-        public virtual AppUser AppUser { get; set; } = null!;
+        [Display(Name = "Пользователь")]
+        public virtual AppUser? AppUser { get; set; }
+
+        [Display(Name = "Подключенные услуги")]
         public virtual ICollection<Service> ConnectedServices { get; set; } = new List<Service>();
     }
 }

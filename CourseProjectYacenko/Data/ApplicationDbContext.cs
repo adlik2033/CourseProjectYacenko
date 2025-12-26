@@ -40,7 +40,7 @@ namespace CourseProjectYacenko.Data
             // Настройка nullable свойств
             modelBuilder.Entity<AppUser>()
                 .Property(u => u.RefreshToken)
-                .IsRequired(false); // Явно указываем, что это поле может быть null
+                .IsRequired(false);
 
             modelBuilder.Entity<AppUser>()
                 .Property(u => u.RefreshTokenExpiryTime)
@@ -58,53 +58,13 @@ namespace CourseProjectYacenko.Data
                 .Property(u => u.PassportData)
                 .IsRequired(false);
 
-            // Дополнительные настройки
-            modelBuilder.Entity<AppUser>()
-                .Property(u => u.PasswordHash)
-                .IsRequired()
-                .HasMaxLength(255);
-
-            modelBuilder.Entity<AppUser>()
-                .Property(u => u.FullName)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<AppUser>()
-                .Property(u => u.PhoneNumber)
-                .IsRequired()
-                .HasMaxLength(15);
-
-            modelBuilder.Entity<AppUser>()
-                .Property(u => u.Email)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<AppUser>()
-                .Property(u => u.Role)
-                .IsRequired()
-                .HasMaxLength(20);
+            // Убедитесь, что TariffId и AppUserId nullable
+            modelBuilder.Entity<Service>()
+                .Property(s => s.TariffId)
+                .IsRequired(false);
 
             modelBuilder.Entity<Tariff>()
-                .Property(t => t.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<Tariff>()
-                .Property(t => t.Description)
-                .HasMaxLength(500);
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.Description)
-                .HasMaxLength(500);
-
-            modelBuilder.Entity<Application>()
-                .Property(a => a.Comment)
-                .HasMaxLength(1000)
+                .Property(t => t.AppUserId)
                 .IsRequired(false);
 
             // Связи
@@ -113,18 +73,6 @@ namespace CourseProjectYacenko.Data
                 .WithOne(t => t.AppUser)
                 .HasForeignKey(t => t.AppUserId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<AppUser>()
-                .HasMany(u => u.Payments)
-                .WithOne(p => p.AppUser)
-                .HasForeignKey(p => p.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<AppUser>()
-                .HasMany(u => u.Applications)
-                .WithOne(a => a.AppUser)
-                .HasForeignKey(a => a.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Tariff>()
                 .HasMany(t => t.ConnectedServices)
@@ -141,7 +89,7 @@ namespace CourseProjectYacenko.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Начальные данные - Тарифы
+            // Начальные данные - ТОЛЬКО ТАРИФЫ И ПОЛЬЗОВАТЕЛИ
             modelBuilder.Entity<Tariff>().HasData(
                 new Tariff
                 {
@@ -151,7 +99,8 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 300.00m,
                     InternetTrafficGB = 5,
                     MinutesCount = 100,
-                    SmsCount = 50
+                    SmsCount = 50,
+                    AppUserId = null
                 },
                 new Tariff
                 {
@@ -161,7 +110,8 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 500.00m,
                     InternetTrafficGB = 15,
                     MinutesCount = 300,
-                    SmsCount = 100
+                    SmsCount = 100,
+                    AppUserId = null
                 },
                 new Tariff
                 {
@@ -171,21 +121,12 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 1000.00m,
                     InternetTrafficGB = 30,
                     MinutesCount = 1000,
-                    SmsCount = 500
-                },
-                new Tariff
-                {
-                    Id = 4,
-                    Name = "Эконом",
-                    Description = "Минимальный пакет",
-                    MonthlyFee = 200.00m,
-                    InternetTrafficGB = 2,
-                    MinutesCount = 50,
-                    SmsCount = 20
+                    SmsCount = 500,
+                    AppUserId = null
                 }
             );
 
-            // Начальные данные - Услуги
+            // Услуги БЕЗ TariffId в seed данных - добавятся позже
             modelBuilder.Entity<Service>().HasData(
                 new Service
                 {
@@ -194,7 +135,8 @@ namespace CourseProjectYacenko.Data
                     Description = "Безлимитный YouTube",
                     Type = ServiceType.Entertainment,
                     Cost = 50.00m,
-                    BillingPeriod = BillingPeriod.Monthly
+                    BillingPeriod = BillingPeriod.Monthly,
+                    TariffId = null // Без привязки к тарифу
                 },
                 new Service
                 {
@@ -203,7 +145,8 @@ namespace CourseProjectYacenko.Data
                     Description = "Защита устройства",
                     Type = ServiceType.Security,
                     Cost = 100.00m,
-                    BillingPeriod = BillingPeriod.Monthly
+                    BillingPeriod = BillingPeriod.Monthly,
+                    TariffId = null
                 },
                 new Service
                 {
@@ -212,26 +155,17 @@ namespace CourseProjectYacenko.Data
                     Description = "Безлимитная музыка",
                     Type = ServiceType.Entertainment,
                     Cost = 30.00m,
-                    BillingPeriod = BillingPeriod.Monthly
-                },
-                new Service
-                {
-                    Id = 4,
-                    Name = "Международные звонки",
-                    Description = "Звонки за границу",
-                    Type = ServiceType.Calls,
-                    Cost = 80.00m,
-                    BillingPeriod = BillingPeriod.Monthly
+                    BillingPeriod = BillingPeriod.Monthly,
+                    TariffId = null
                 }
             );
 
-            // Начальные данные - Пользователи
             modelBuilder.Entity<AppUser>().HasData(
                 new AppUser
                 {
                     Id = 1,
                     FullName = "Администратор Системы",
-                    PhoneNumber = "9998887766",
+                    PhoneNumber = "+79998887766",
                     Email = "admin@mobileoperator.ru",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
                     Address = "г. Москва, ул. Административная, д. 1",
@@ -239,98 +173,7 @@ namespace CourseProjectYacenko.Data
                     Balance = 10000.00m,
                     Role = "Admin",
                     IsActive = true,
-                    RegistrationDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    RefreshToken = null, // Явно указываем null
-                    RefreshTokenExpiryTime = null,
-                    LastLoginDate = null
-                },
-                new AppUser
-                {
-                    Id = 2,
-                    FullName = "Иванов Иван Иванович",
-                    PhoneNumber = "9991112233",
-                    Email = "ivanov@example.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("User123!"),
-                    Address = "г. Москва, ул. Примерная, д. 10",
-                    PassportData = "1234 567890",
-                    Balance = 1500.50m,
-                    Role = "User",
-                    IsActive = true,
-                    RegistrationDate = new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc),
-                    RefreshToken = null,
-                    RefreshTokenExpiryTime = null,
-                    LastLoginDate = null
-                },
-                new AppUser
-                {
-                    Id = 3,
-                    FullName = "Петрова Анна Сергеевна",
-                    PhoneNumber = "9992223344",
-                    Email = "petrova@example.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("User456!"),
-                    Address = "г. Санкт-Петербург, ул. Тестовая, д. 5",
-                    PassportData = "5678 901234",
-                    Balance = 750.25m,
-                    Role = "User",
-                    IsActive = true,
-                    RegistrationDate = new DateTime(2024, 3, 1, 0, 0, 0, DateTimeKind.Utc),
-                    RefreshToken = null,
-                    RefreshTokenExpiryTime = null,
-                    LastLoginDate = null
-                }
-            );
-
-            // Начальные данные - Платежи
-            modelBuilder.Entity<Payment>().HasData(
-                new Payment
-                {
-                    Id = 1,
-                    AppUserId = 2,
-                    Amount = 1000.00m,
-                    PaymentDateTime = new DateTime(2024, 2, 5, 10, 30, 0, DateTimeKind.Utc),
-                    PaymentMethod = PaymentMethod.CreditCard,
-                    Status = PaymentStatus.Completed
-                },
-                new Payment
-                {
-                    Id = 2,
-                    AppUserId = 2,
-                    Amount = 500.50m,
-                    PaymentDateTime = new DateTime(2024, 3, 10, 14, 15, 0, DateTimeKind.Utc),
-                    PaymentMethod = PaymentMethod.Online,
-                    Status = PaymentStatus.Completed
-                },
-                new Payment
-                {
-                    Id = 3,
-                    AppUserId = 3,
-                    Amount = 1000.00m,
-                    PaymentDateTime = new DateTime(2024, 3, 15, 9, 45, 0, DateTimeKind.Utc),
-                    PaymentMethod = PaymentMethod.BankTransfer,
-                    Status = PaymentStatus.Completed
-                }
-            );
-
-            // Начальные данные - Заявки
-            modelBuilder.Entity<Application>().HasData(
-                new Application
-                {
-                    Id = 1,
-                    AppUserId = 2,
-                    Type = ApplicationType.NewConnection,
-                    CreationDate = new DateTime(2024, 2, 1, 9, 0, 0, DateTimeKind.Utc),
-                    ProcessingDate = new DateTime(2024, 2, 2, 14, 30, 0, DateTimeKind.Utc),
-                    Status = ApplicationStatus.Completed,
-                    Comment = "Новое подключение обработано"
-                },
-                new Application
-                {
-                    Id = 2,
-                    AppUserId = 3,
-                    Type = ApplicationType.TariffChange,
-                    CreationDate = new DateTime(2024, 3, 5, 11, 20, 0, DateTimeKind.Utc),
-                    Status = ApplicationStatus.InProgress,
-                    Comment = "Запрос на смену тарифа"
+                    RegistrationDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
         }

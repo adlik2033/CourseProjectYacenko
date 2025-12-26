@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourseProjectYacenko.Migrations
 {
     /// <inheritdoc />
-    public partial class firatMigrations : Migration
+    public partial class _121123 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,14 +20,14 @@ namespace CourseProjectYacenko.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     PassportData = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -49,7 +49,7 @@ namespace CourseProjectYacenko.Migrations
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProcessingDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,8 +141,7 @@ namespace CourseProjectYacenko.Migrations
                 {
                     { 1, 2, 50.00m, "Безлимитный YouTube", "YouTube безлимит", null, 3 },
                     { 2, 2, 100.00m, "Защита устройства", "Антивирус", null, 4 },
-                    { 3, 2, 30.00m, "Безлимитная музыка", "Музыка", null, 3 },
-                    { 4, 2, 80.00m, "Звонки за границу", "Международные звонки", null, 1 }
+                    { 3, 2, 30.00m, "Безлимитная музыка", "Музыка", null, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -152,38 +151,13 @@ namespace CourseProjectYacenko.Migrations
                 {
                     { 1, null, "Для новых клиентов", 5, 100, 300.00m, "Базовый", 50 },
                     { 2, null, "Популярный тариф", 15, 300, 500.00m, "Стандарт", 100 },
-                    { 3, null, "Для активных пользователей", 30, 1000, 1000.00m, "Премиум", 500 },
-                    { 4, null, "Минимальный пакет", 2, 50, 200.00m, "Эконом", 20 }
+                    { 3, null, "Для активных пользователей", 30, 1000, 1000.00m, "Премиум", 500 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "Balance", "Email", "FullName", "IsActive", "LastLoginDate", "PassportData", "PasswordHash", "PhoneNumber", "RefreshToken", "RefreshTokenExpiryTime", "RegistrationDate", "Role" },
-                values: new object[,]
-                {
-                    { 1, "г. Москва, ул. Административная, д. 1", 10000.00m, "admin@mobileoperator.ru", "Администратор Системы", true, null, "0000 000000", "$2a$11$XMcVtQQ3bQwNX2lozQfoyOyreHMPifSuS/.sOxqpUzm6co9q69vQ6", "9998887766", null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Admin" },
-                    { 2, "г. Москва, ул. Примерная, д. 10", 1500.50m, "ivanov@example.com", "Иванов Иван Иванович", true, null, "1234 567890", "$2a$11$PTdbwEfGpJOE5dTidkUeUOljftB1L2p1E1voVh5DkSco9VNpOiw7O", "9991112233", null, null, new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc), "User" },
-                    { 3, "г. Санкт-Петербург, ул. Тестовая, д. 5", 750.25m, "petrova@example.com", "Петрова Анна Сергеевна", true, null, "5678 901234", "$2a$11$QWM.SQuD6Jb1GZhF6g55bO9UyzKrAtbCAe6oqVCvfmr/LR9rJxfuC", "9992223344", null, null, new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc), "User" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Applications",
-                columns: new[] { "Id", "AppUserId", "Comment", "CreationDate", "ProcessingDate", "Status", "Type" },
-                values: new object[,]
-                {
-                    { 1, 2, "Новое подключение обработано", new DateTime(2024, 2, 1, 9, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 2, 2, 14, 30, 0, 0, DateTimeKind.Utc), 2, 0 },
-                    { 2, 3, "Запрос на смену тарифа", new DateTime(2024, 3, 5, 11, 20, 0, 0, DateTimeKind.Utc), null, 1, 1 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Payments",
-                columns: new[] { "Id", "Amount", "AppUserId", "PaymentDateTime", "PaymentMethod", "Status" },
-                values: new object[,]
-                {
-                    { 1, 1000.00m, 2, new DateTime(2024, 2, 5, 10, 30, 0, 0, DateTimeKind.Utc), 0, 1 },
-                    { 2, 500.50m, 2, new DateTime(2024, 3, 10, 14, 15, 0, 0, DateTimeKind.Utc), 3, 1 },
-                    { 3, 1000.00m, 3, new DateTime(2024, 3, 15, 9, 45, 0, 0, DateTimeKind.Utc), 1, 1 }
-                });
+                values: new object[] { 1, "г. Москва, ул. Административная, д. 1", 10000.00m, "admin@mobileoperator.ru", "Администратор Системы", true, null, "0000 000000", "$2a$11$Tfcrs4EXGULPoK6KkadmNu2sykiVqRDWdXzC1z9zBILc0psbGHToy", "+79998887766", null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Applications_AppUserId",

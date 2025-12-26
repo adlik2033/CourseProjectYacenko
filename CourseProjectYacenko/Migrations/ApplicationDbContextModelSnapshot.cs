@@ -17,7 +17,7 @@ namespace CourseProjectYacenko.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -60,13 +60,12 @@ namespace CourseProjectYacenko.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
@@ -79,8 +78,7 @@ namespace CourseProjectYacenko.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -102,38 +100,10 @@ namespace CourseProjectYacenko.Migrations
                             FullName = "Администратор Системы",
                             IsActive = true,
                             PassportData = "0000 000000",
-                            PasswordHash = "$2a$11$XMcVtQQ3bQwNX2lozQfoyOyreHMPifSuS/.sOxqpUzm6co9q69vQ6",
-                            PhoneNumber = "9998887766",
+                            PasswordHash = "$2a$11$Tfcrs4EXGULPoK6KkadmNu2sykiVqRDWdXzC1z9zBILc0psbGHToy",
+                            PhoneNumber = "+79998887766",
                             RegistrationDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Role = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "г. Москва, ул. Примерная, д. 10",
-                            Balance = 1500.50m,
-                            Email = "ivanov@example.com",
-                            FullName = "Иванов Иван Иванович",
-                            IsActive = true,
-                            PassportData = "1234 567890",
-                            PasswordHash = "$2a$11$PTdbwEfGpJOE5dTidkUeUOljftB1L2p1E1voVh5DkSco9VNpOiw7O",
-                            PhoneNumber = "9991112233",
-                            RegistrationDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Role = "User"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "г. Санкт-Петербург, ул. Тестовая, д. 5",
-                            Balance = 750.25m,
-                            Email = "petrova@example.com",
-                            FullName = "Петрова Анна Сергеевна",
-                            IsActive = true,
-                            PassportData = "5678 901234",
-                            PasswordHash = "$2a$11$QWM.SQuD6Jb1GZhF6g55bO9UyzKrAtbCAe6oqVCvfmr/LR9rJxfuC",
-                            PhoneNumber = "9992223344",
-                            RegistrationDate = new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Role = "User"
                         });
                 });
 
@@ -149,6 +119,7 @@ namespace CourseProjectYacenko.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -169,27 +140,6 @@ namespace CourseProjectYacenko.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Applications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AppUserId = 2,
-                            Comment = "Новое подключение обработано",
-                            CreationDate = new DateTime(2024, 2, 1, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ProcessingDate = new DateTime(2024, 2, 2, 14, 30, 0, 0, DateTimeKind.Utc),
-                            Status = 2,
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AppUserId = 3,
-                            Comment = "Запрос на смену тарифа",
-                            CreationDate = new DateTime(2024, 3, 5, 11, 20, 0, 0, DateTimeKind.Utc),
-                            Status = 1,
-                            Type = 1
-                        });
                 });
 
             modelBuilder.Entity("CourseProjectYacenko.Models.Payment", b =>
@@ -221,35 +171,6 @@ namespace CourseProjectYacenko.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Payments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 1000.00m,
-                            AppUserId = 2,
-                            PaymentDateTime = new DateTime(2024, 2, 5, 10, 30, 0, 0, DateTimeKind.Utc),
-                            PaymentMethod = 0,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 500.50m,
-                            AppUserId = 2,
-                            PaymentDateTime = new DateTime(2024, 3, 10, 14, 15, 0, 0, DateTimeKind.Utc),
-                            PaymentMethod = 3,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 1000.00m,
-                            AppUserId = 3,
-                            PaymentDateTime = new DateTime(2024, 3, 15, 9, 45, 0, 0, DateTimeKind.Utc),
-                            PaymentMethod = 1,
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("CourseProjectYacenko.Models.Service", b =>
@@ -316,15 +237,6 @@ namespace CourseProjectYacenko.Migrations
                             Description = "Безлимитная музыка",
                             Name = "Музыка",
                             Type = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            BillingPeriod = 2,
-                            Cost = 80.00m,
-                            Description = "Звонки за границу",
-                            Name = "Международные звонки",
-                            Type = 1
                         });
                 });
 
@@ -398,16 +310,6 @@ namespace CourseProjectYacenko.Migrations
                             MonthlyFee = 1000.00m,
                             Name = "Премиум",
                             SmsCount = 500
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Минимальный пакет",
-                            InternetTrafficGB = 2,
-                            MinutesCount = 50,
-                            MonthlyFee = 200.00m,
-                            Name = "Эконом",
-                            SmsCount = 20
                         });
                 });
 

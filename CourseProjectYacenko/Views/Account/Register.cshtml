@@ -14,7 +14,17 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <form method="post">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+
+                    <form method="post" id="registerForm">
                         @Html.AntiForgeryToken()
 
                         <div class="row">
@@ -24,19 +34,22 @@
                                 <div class="mb-3">
                                     <label class="form-label">ФИО *</label>
                                     <input asp-for="FullName" class="form-control" placeholder="Иванов Иван Иванович" required>
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Номер телефона *</label>
                                     <div class="input-group">
                                         <span class="input-group-text">+7</span>
-                                        <input asp-for="PhoneNumber" class="form-control" placeholder="999 999-99-99" required>
+                                        <input asp-for="PhoneNumber" class="form-control" placeholder="9999999999" required>
                                     </div>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Email *</label>
                                     <input asp-for="Email" type="email" class="form-control" placeholder="example@mail.ru" required>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
@@ -51,11 +64,13 @@
                                 <div class="mb-3">
                                     <label class="form-label">Пароль *</label>
                                     <input asp-for="Password" type="password" class="form-control" placeholder="Минимум 6 символов" required>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Подтверждение пароля *</label>
                                     <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Повторите пароль" required>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
@@ -87,3 +102,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

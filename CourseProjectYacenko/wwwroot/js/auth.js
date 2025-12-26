@@ -153,7 +153,6 @@ class AuthService {
 
     // Показ уведомления
     showNotification(message, type = 'info') {
-        // Удаляем старые уведомления
         const oldNotifications = document.querySelectorAll('.auth-notification');
         oldNotifications.forEach(el => el.remove());
 
@@ -235,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Обработчик формы регистрации
     const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
+    if (registerForm && !registerForm.classList.contains('no-ajax')) {
         registerForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -320,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Добавляем CSS анимацию для уведомлений
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
