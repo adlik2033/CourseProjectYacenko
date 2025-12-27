@@ -1,63 +1,71 @@
 ﻿using CourseProjectYacenko.Data;
 using CourseProjectYacenko.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Repository
 {
-    public class UserRepository : BaseRepository<AppUser>, IUserRepository
+    public class UserRepository : IUserRepository
     {
-        public UserRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _context;
 
-        public async Task<AppUser> GetByPhoneAsync(string phoneNumber)
+        public UserRepository(ApplicationDbContext context)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            _context = context;
         }
 
-        public async Task<AppUser> GetByEmailAsync(string email)
+        public async Task<AppUser?> GetByIdAsync(int id)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.FindAsync(id);
         }
 
-        public async Task<AppUser> GetUserWithDetailsAsync(int id)
+        public async Task<AppUser?> GetByIdWithTariffsAsync(int id)
         {
-            return await _dbSet
+            return await _context.Users
                 .Include(u => u.Tariffs)
-                .Include(u => u.Payments)
-                .Include(u => u.Applications)
+                    .ThenInclude(t => t.ConnectedServices)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<IEnumerable<AppUser>> GetUsersWithTariffsAsync()
+        public async Task<AppUser?> GetByPhoneAsync(string phoneNumber)
         {
-            return await _dbSet
-                .Include(u => u.Tariffs)
-                .Where(u => u.Tariffs.Any())
-                .ToListAsync();
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
         }
 
-        public async Task<IEnumerable<AppUser>> GetUsersWithLowBalanceAsync(decimal threshold)
+        public async Task<AppUser?> GetByEmailAsync(string email)
         {
-            return await _dbSet
-                .Where(u => u.Balance < threshold)
-                .ToListAsync();
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<decimal> GetTotalBalanceAsync()
+        public async Task AddAsync(AppUser user)
         {
-            return await _dbSet.SumAsync(u => u.Balance);
+            await _context.Users.AddAsync(user);
         }
 
-        public async Task<int> GetActiveUsersCountAsync()
+        public async Task UpdateAsync(AppUser user)
         {
-            return await _dbSet.CountAsync(u => u.IsActive);
+            _context.Users.Update(user);
+            await Task.CompletedTask;
         }
 
-        public override async Task<AppUser> GetByIdAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            return await GetUserWithDetailsAsync(id);
+            var user = await GetByIdAsync(id);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+            }
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<AppUser>> GetAllAsync()
+        {
+            return await _context.Users.ToListAsync();
         }
     }
 }

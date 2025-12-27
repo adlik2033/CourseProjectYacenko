@@ -1,30 +1,98 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using CourseProjectYacenko.DTO.User;
+using CourseProjectYacenko.Models;
 using CourseProjectYacenko.Services;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CourseProjectYacenko.Controllers
 {
     [Authorize]
     public class ProfileController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
         private readonly ITariffService _tariffService;
+        private readonly IUserService _userService;
 
-        public ProfileController(IUserService userService, ITariffService tariffService)
+        public ProfileController(
+            IAuthService authService,
+            ITariffService tariffService,
+            IUserService userService)
         {
-            _userService = userService;
+            _authService = authService;
             _tariffService = tariffService;
+            _userService = userService;
         }
 
-        [HttpGet]
+        private int GetCurrentUserId()
+        {
+            return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        }
+
+        // Главная страница профиля
         public async Task<IActionResult> Index()
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            var user = await _userService.GetUserProfileAsync(userId);
+            var userId = GetCurrentUserId();
+            var user = await _authService.GetCurrentUserAsync(userId);
+
+            if (user == null)
+                return RedirectToAction("Login", "Account");
 
             return View(user);
         }
+
+        // Страница редактирования профиля (GET)
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var userId = GetCurrentUserId();
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            var editModel = new EditProfileDto
+            {
+                FullName = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                Address = user.Address,
+                PassportData = user.PassportData
+            };
+
+            return View(editModel);
+        }
+
+        // Сохранение изменений профиля (POST)
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditProfileDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var userId = GetCurrentUserId();
+                var success = await _userService.UpdateUserAsync(userId, model);
+
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Профиль успешно обновлен!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Ошибка при обновлении профиля");
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> MyTariffs()

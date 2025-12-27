@@ -1,87 +1,40 @@
-using CourseProjectYacenko.Data;
 using CourseProjectYacenko.Helpers;
 using CourseProjectYacenko.Repository;
 using CourseProjectYacenko.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Конфигурация
-var configuration = builder.Configuration;
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
-// Настройка базы данных
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-// Настройка JWT
-var jwtSettings = new JwtSettings();
-configuration.GetSection("JwtSettings").Bind(jwtSettings);
-builder.Services.AddSingleton(jwtSettings);
-
-// Аутентификация
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-.AddCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true;
-});
-
-// Добавляем JWT Bearer
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
-        };
-    });
-
-// Авторизация
-builder.Services.AddAuthorization();
-
-// Регистрация репозиториев
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITariffRepository, TariffRepository>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
-
-// Регистрация сервисов
+// Добавьте сервисы
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITariffService, TariffService>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
-builder.Services.AddScoped<IApplicationService, ApplicationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITariffRepository, TariffRepository>();
 
-// AutoMapper - исправляем регистрацию
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+// JWT настройки
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
-// MVC
-builder.Services.AddControllersWithViews();
-builder.Services.AddHttpContextAccessor();
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Аутентификация через куки
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(3);
+    });
 
 var app = builder.Build();
 
-// Конвейер
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -90,18 +43,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseAuthentication();
+
+app.UseAuthentication(); // Важно: должно быть до UseAuthorization
 app.UseAuthorization();
 
-// Создание базы данных при первом запуске
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.EnsureCreated();
-}
-
-// В Program.cs убедитесь, что есть:
+// Настройка маршрутов по умолчанию
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -1,74 +1,55 @@
 ﻿using CourseProjectYacenko.Data;
 using CourseProjectYacenko.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Repository
 {
-    public class TariffRepository : BaseRepository<Tariff>, ITariffRepository
+    public class TariffRepository : ITariffRepository
     {
-        public TariffRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _context;
 
-        public async Task<IEnumerable<Tariff>> GetTariffsWithServicesAsync()
+        public TariffRepository(ApplicationDbContext context)
         {
-            return await _dbSet
-                .Include(t => t.ConnectedServices)
-                .ToListAsync();
+            _context = context;
         }
 
-        public async Task<Tariff> GetTariffWithServicesAsync(int id)
+        public async Task<Tariff?> GetByIdAsync(int id)
         {
-            return await _dbSet
+            return await _context.Tariffs
                 .Include(t => t.ConnectedServices)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<IEnumerable<Tariff>> GetPopularTariffsAsync(int count)
+        public async Task<List<Tariff>> GetAllAsync()
         {
-            return await _dbSet
+            return await _context.Tariffs
                 .Include(t => t.ConnectedServices)
-                .Take(count)
                 .ToListAsync();
         }
 
-        public async Task<bool> AssignTariffToUserAsync(int tariffId, int userId)
+        public async Task AddAsync(Tariff tariff)
         {
-            var tariff = await GetByIdAsync(tariffId);
-            if (tariff == null) return false;
-
-            tariff.AppUserId = userId;
-            await UpdateAsync(tariff);
-            await SaveChangesAsync();
-
-            return true;
+            await _context.Tariffs.AddAsync(tariff);
         }
 
-        public async Task<bool> RemoveTariffFromUserAsync(int tariffId, int userId)
+        public async Task UpdateAsync(Tariff tariff)
         {
-            var tariff = await GetByIdAsync(tariffId);
-            if (tariff == null || tariff.AppUserId != userId) return false;
-
-            tariff.AppUserId = null;
-            await UpdateAsync(tariff);
-            await SaveChangesAsync();
-
-            return true;
+            _context.Tariffs.Update(tariff);
+            await Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<Tariff>> FindMatchingTariffsAsync(int minutes, int internetGb, int sms)
+        public async Task DeleteAsync(int id)
         {
-            return await _dbSet
-                .Where(t => t.MinutesCount >= minutes &&
-                           t.InternetTrafficGB >= internetGb &&
-                           t.SmsCount >= sms)
-                .ToListAsync();
+            var tariff = await GetByIdAsync(id);
+            if (tariff != null)
+            {
+                _context.Tariffs.Remove(tariff);
+            }
         }
 
-        public override async Task<Tariff> GetByIdAsync(int id)
+        public async Task<bool> SaveChangesAsync()
         {
-            return await GetTariffWithServicesAsync(id);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

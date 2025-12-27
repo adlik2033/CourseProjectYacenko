@@ -1,17 +1,18 @@
 ﻿using CourseProjectYacenko.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Repository
 {
-    public interface IUserRepository : IRepository<AppUser>
+    public interface IUserRepository
     {
-        Task<AppUser> GetByPhoneAsync(string phoneNumber);
-        Task<AppUser> GetByEmailAsync(string email);
-        Task<AppUser> GetUserWithDetailsAsync(int id);
-        Task<IEnumerable<AppUser>> GetUsersWithTariffsAsync();
-        Task<IEnumerable<AppUser>> GetUsersWithLowBalanceAsync(decimal threshold);
-        Task<decimal> GetTotalBalanceAsync();
-        Task<int> GetActiveUsersCountAsync();
+        Task<AppUser?> GetByIdAsync(int id);
+        Task<AppUser?> GetByIdWithTariffsAsync(int id); 
+        Task<AppUser?> GetByPhoneAsync(string phoneNumber);
+        Task<AppUser?> GetByEmailAsync(string email);
+        Task AddAsync(AppUser user);
+        Task UpdateAsync(AppUser user);
+        Task DeleteAsync(int id);
+        Task<bool> SaveChangesAsync();
+
+        Task<List<AppUser>> GetAllAsync();
     }
 }
