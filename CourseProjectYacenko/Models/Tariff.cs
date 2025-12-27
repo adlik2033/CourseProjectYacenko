@@ -33,15 +33,11 @@ namespace CourseProjectYacenko.Models
         [Display(Name = "Количество SMS")]
         public int SmsCount { get; set; }
 
-        // Внешний ключ - nullable!
-        [Display(Name = "ID пользователя")]
-        public int? AppUserId { get; set; }
-
         // Навигационные свойства
-        [Display(Name = "Пользователь")]
-        public virtual AppUser? AppUser { get; set; }
-
         [Display(Name = "Подключенные услуги")]
         public virtual ICollection<Service> ConnectedServices { get; set; } = new List<Service>();
+
+        // Связь многие-ко-многим с AppUser
+        public virtual ICollection<AppUser> Users { get; set; } = new List<AppUser>();
     }
 }

@@ -22,6 +22,21 @@ namespace CourseProjectYacenko.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AppUserTariff", b =>
+                {
+                    b.Property<int>("TariffsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TariffsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("AppUserTariff");
+                });
+
             modelBuilder.Entity("CourseProjectYacenko.Models.AppUser", b =>
                 {
                     b.Property<int>("Id")
@@ -100,7 +115,7 @@ namespace CourseProjectYacenko.Migrations
                             FullName = "Администратор Системы",
                             IsActive = true,
                             PassportData = "0000 000000",
-                            PasswordHash = "$2a$11$Tfcrs4EXGULPoK6KkadmNu2sykiVqRDWdXzC1z9zBILc0psbGHToy",
+                            PasswordHash = "$2a$11$L346zEBarnIDEUodeE4oBejhwadAKUiR95/VAgfm0rTqgGLYZpwhy",
                             PhoneNumber = "+79998887766",
                             RegistrationDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Role = "Admin"
@@ -248,9 +263,6 @@ namespace CourseProjectYacenko.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -275,8 +287,6 @@ namespace CourseProjectYacenko.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
 
                     b.ToTable("Tariffs");
 
@@ -313,6 +323,21 @@ namespace CourseProjectYacenko.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AppUserTariff", b =>
+                {
+                    b.HasOne("CourseProjectYacenko.Models.Tariff", null)
+                        .WithMany()
+                        .HasForeignKey("TariffsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CourseProjectYacenko.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CourseProjectYacenko.Models.Application", b =>
                 {
                     b.HasOne("CourseProjectYacenko.Models.AppUser", "AppUser")
@@ -345,23 +370,11 @@ namespace CourseProjectYacenko.Migrations
                     b.Navigation("Tariff");
                 });
 
-            modelBuilder.Entity("CourseProjectYacenko.Models.Tariff", b =>
-                {
-                    b.HasOne("CourseProjectYacenko.Models.AppUser", "AppUser")
-                        .WithMany("Tariffs")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("CourseProjectYacenko.Models.AppUser", b =>
                 {
                     b.Navigation("Applications");
 
                     b.Navigation("Payments");
-
-                    b.Navigation("Tariffs");
                 });
 
             modelBuilder.Entity("CourseProjectYacenko.Models.Tariff", b =>

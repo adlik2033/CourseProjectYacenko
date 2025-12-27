@@ -8,11 +8,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourseProjectYacenko.Migrations
 {
     /// <inheritdoc />
-    public partial class _121123 : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Tariffs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    MonthlyFee = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    InternetTrafficGB = table.Column<int>(type: "int", nullable: false),
+                    MinutesCount = table.Column<int>(type: "int", nullable: false),
+                    SmsCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tariffs", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -39,6 +57,30 @@ namespace CourseProjectYacenko.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Services",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    BillingPeriod = table.Column<int>(type: "int", nullable: false),
+                    TariffId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Services_Tariffs_TariffId",
+                        column: x => x.TariffId,
+                        principalTable: "Tariffs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Applications",
                 columns: table => new
                 {
@@ -57,6 +99,30 @@ namespace CourseProjectYacenko.Migrations
                     table.ForeignKey(
                         name: "FK_Applications_Users_AppUserId",
                         column: x => x.AppUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppUserTariff",
+                columns: table => new
+                {
+                    TariffsId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUserTariff", x => new { x.TariffsId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_AppUserTariff_Tariffs_TariffsId",
+                        column: x => x.TariffsId,
+                        principalTable: "Tariffs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppUserTariff_Users_UsersId",
+                        column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -85,55 +151,6 @@ namespace CourseProjectYacenko.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Tariffs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    MonthlyFee = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    InternetTrafficGB = table.Column<int>(type: "int", nullable: false),
-                    MinutesCount = table.Column<int>(type: "int", nullable: false),
-                    SmsCount = table.Column<int>(type: "int", nullable: false),
-                    AppUserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tariffs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tariffs_Users_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Services",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Cost = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    BillingPeriod = table.Column<int>(type: "int", nullable: false),
-                    TariffId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Services", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Services_Tariffs_TariffId",
-                        column: x => x.TariffId,
-                        principalTable: "Tariffs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
             migrationBuilder.InsertData(
                 table: "Services",
                 columns: new[] { "Id", "BillingPeriod", "Cost", "Description", "Name", "TariffId", "Type" },
@@ -146,23 +163,28 @@ namespace CourseProjectYacenko.Migrations
 
             migrationBuilder.InsertData(
                 table: "Tariffs",
-                columns: new[] { "Id", "AppUserId", "Description", "InternetTrafficGB", "MinutesCount", "MonthlyFee", "Name", "SmsCount" },
+                columns: new[] { "Id", "Description", "InternetTrafficGB", "MinutesCount", "MonthlyFee", "Name", "SmsCount" },
                 values: new object[,]
                 {
-                    { 1, null, "Для новых клиентов", 5, 100, 300.00m, "Базовый", 50 },
-                    { 2, null, "Популярный тариф", 15, 300, 500.00m, "Стандарт", 100 },
-                    { 3, null, "Для активных пользователей", 30, 1000, 1000.00m, "Премиум", 500 }
+                    { 1, "Для новых клиентов", 5, 100, 300.00m, "Базовый", 50 },
+                    { 2, "Популярный тариф", 15, 300, 500.00m, "Стандарт", 100 },
+                    { 3, "Для активных пользователей", 30, 1000, 1000.00m, "Премиум", 500 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "Balance", "Email", "FullName", "IsActive", "LastLoginDate", "PassportData", "PasswordHash", "PhoneNumber", "RefreshToken", "RefreshTokenExpiryTime", "RegistrationDate", "Role" },
-                values: new object[] { 1, "г. Москва, ул. Административная, д. 1", 10000.00m, "admin@mobileoperator.ru", "Администратор Системы", true, null, "0000 000000", "$2a$11$Tfcrs4EXGULPoK6KkadmNu2sykiVqRDWdXzC1z9zBILc0psbGHToy", "+79998887766", null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Admin" });
+                values: new object[] { 1, "г. Москва, ул. Административная, д. 1", 10000.00m, "admin@mobileoperator.ru", "Администратор Системы", true, null, "0000 000000", "$2a$11$L346zEBarnIDEUodeE4oBejhwadAKUiR95/VAgfm0rTqgGLYZpwhy", "+79998887766", null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Applications_AppUserId",
                 table: "Applications",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppUserTariff_UsersId",
+                table: "AppUserTariff",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_AppUserId",
@@ -173,11 +195,6 @@ namespace CourseProjectYacenko.Migrations
                 name: "IX_Services_TariffId",
                 table: "Services",
                 column: "TariffId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tariffs_AppUserId",
-                table: "Tariffs",
-                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -199,16 +216,19 @@ namespace CourseProjectYacenko.Migrations
                 name: "Applications");
 
             migrationBuilder.DropTable(
+                name: "AppUserTariff");
+
+            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "Tariffs");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Tariffs");
         }
     }
 }

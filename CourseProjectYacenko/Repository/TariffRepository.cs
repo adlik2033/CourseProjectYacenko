@@ -1,6 +1,8 @@
 ﻿using CourseProjectYacenko.Data;
 using CourseProjectYacenko.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CourseProjectYacenko.Repository
 {
@@ -13,7 +15,12 @@ namespace CourseProjectYacenko.Repository
             _context = context;
         }
 
-        public async Task<Tariff?> GetByIdAsync(int id)
+        public async Task<Tariff> GetByIdAsync(int id)
+        {
+            return await _context.Tariffs.FindAsync(id);
+        }
+
+        public async Task<Tariff> GetByIdWithServicesAsync(int id)
         {
             return await _context.Tariffs
                 .Include(t => t.ConnectedServices)
@@ -22,20 +29,28 @@ namespace CourseProjectYacenko.Repository
 
         public async Task<List<Tariff>> GetAllAsync()
         {
+            return await _context.Tariffs.ToListAsync();
+        }
+
+        public async Task<List<Tariff>> GetAllWithServicesAsync()
+        {
             return await _context.Tariffs
                 .Include(t => t.ConnectedServices)
                 .ToListAsync();
         }
 
-        public async Task AddAsync(Tariff tariff)
+        public async Task<Tariff> AddAsync(Tariff tariff)
         {
-            await _context.Tariffs.AddAsync(tariff);
+            _context.Tariffs.Add(tariff);
+            await _context.SaveChangesAsync();
+            return tariff;
         }
 
-        public async Task UpdateAsync(Tariff tariff)
+        public async Task<Tariff> UpdateAsync(Tariff tariff)
         {
             _context.Tariffs.Update(tariff);
-            await Task.CompletedTask;
+            await _context.SaveChangesAsync();
+            return tariff;
         }
 
         public async Task DeleteAsync(int id)
@@ -44,12 +59,13 @@ namespace CourseProjectYacenko.Repository
             if (tariff != null)
             {
                 _context.Tariffs.Remove(tariff);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
         }
     }
 }

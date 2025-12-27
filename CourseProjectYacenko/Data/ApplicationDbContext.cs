@@ -58,21 +58,9 @@ namespace CourseProjectYacenko.Data
                 .Property(u => u.PassportData)
                 .IsRequired(false);
 
-            // Убедитесь, что TariffId и AppUserId nullable
-            modelBuilder.Entity<Service>()
-                .Property(s => s.TariffId)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Tariff>()
-                .Property(t => t.AppUserId)
-                .IsRequired(false);
-
-            // Связи
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.Tariffs)
-                .WithOne(t => t.AppUser)
-                .HasForeignKey(t => t.AppUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .WithMany(t => t.Users);
 
             modelBuilder.Entity<Tariff>()
                 .HasMany(t => t.ConnectedServices)
@@ -80,7 +68,6 @@ namespace CourseProjectYacenko.Data
                 .HasForeignKey(s => s.TariffId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Уникальные индексы
             modelBuilder.Entity<AppUser>()
                 .HasIndex(u => u.PhoneNumber)
                 .IsUnique();
@@ -89,7 +76,6 @@ namespace CourseProjectYacenko.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Начальные данные - ТОЛЬКО ТАРИФЫ И ПОЛЬЗОВАТЕЛИ
             modelBuilder.Entity<Tariff>().HasData(
                 new Tariff
                 {
@@ -99,8 +85,7 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 300.00m,
                     InternetTrafficGB = 5,
                     MinutesCount = 100,
-                    SmsCount = 50,
-                    AppUserId = null
+                    SmsCount = 50
                 },
                 new Tariff
                 {
@@ -110,8 +95,7 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 500.00m,
                     InternetTrafficGB = 15,
                     MinutesCount = 300,
-                    SmsCount = 100,
-                    AppUserId = null
+                    SmsCount = 100
                 },
                 new Tariff
                 {
@@ -121,12 +105,11 @@ namespace CourseProjectYacenko.Data
                     MonthlyFee = 1000.00m,
                     InternetTrafficGB = 30,
                     MinutesCount = 1000,
-                    SmsCount = 500,
-                    AppUserId = null
+                    SmsCount = 500
                 }
             );
 
-            // Услуги БЕЗ TariffId в seed данных - добавятся позже
+            // Услуги (без привязки к тарифам при инициализации)
             modelBuilder.Entity<Service>().HasData(
                 new Service
                 {
@@ -135,8 +118,7 @@ namespace CourseProjectYacenko.Data
                     Description = "Безлимитный YouTube",
                     Type = ServiceType.Entertainment,
                     Cost = 50.00m,
-                    BillingPeriod = BillingPeriod.Monthly,
-                    TariffId = null // Без привязки к тарифу
+                    BillingPeriod = BillingPeriod.Monthly
                 },
                 new Service
                 {
@@ -145,8 +127,7 @@ namespace CourseProjectYacenko.Data
                     Description = "Защита устройства",
                     Type = ServiceType.Security,
                     Cost = 100.00m,
-                    BillingPeriod = BillingPeriod.Monthly,
-                    TariffId = null
+                    BillingPeriod = BillingPeriod.Monthly
                 },
                 new Service
                 {
@@ -155,11 +136,11 @@ namespace CourseProjectYacenko.Data
                     Description = "Безлимитная музыка",
                     Type = ServiceType.Entertainment,
                     Cost = 30.00m,
-                    BillingPeriod = BillingPeriod.Monthly,
-                    TariffId = null
+                    BillingPeriod = BillingPeriod.Monthly
                 }
             );
 
+            // Администратор
             modelBuilder.Entity<AppUser>().HasData(
                 new AppUser
                 {
